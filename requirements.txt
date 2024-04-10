@@ -1,0 +1,13 @@
+# Excel and data manipulation:
+pandas
+nltk
+tensorflow
+
+# Image processing:
+opencv-python
+matplotlib
+pdf2image
+pytesseract
+
+# 
+openpyxl
