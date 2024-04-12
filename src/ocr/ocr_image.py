@@ -30,7 +30,8 @@ def process_image(img_link):
 
 
 def save_to_csv(img_folder_link, output_path):
-    link_csv = os.path.join(output_path, "journal_text.csv")
+    csv_name = os.path.splitext(os.path.basename(img_folder_link))[0]
+    link_csv = os.path.join(output_path, f"{csv_name}.csv")
     with open(link_csv, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["journal", "text"])
@@ -66,11 +67,17 @@ def save_to_xlsx(img_folder_link, output_path):
 
 
 def main():
-    img_folder_link = "./dataset/data_image/journal_9892_1/"
     output_path = config.TEXT_DATA_LINK
     os.makedirs(output_path, exist_ok=True)
-    save_to_csv(img_folder_link, output_path)
-    save_to_xlsx(img_folder_link, output_path)
+    # img_folder_link = "./dataset/data_image/journal_9892_1/"
+    # save_to_csv(img_folder_link, output_path)
+    # save_to_xlsx(img_folder_link, output_path)
+    pdf_folder_path = "./dataset/data_image/"
+    for filename in os.listdir(pdf_folder_path):
+        img_folder_link = os.path.join(pdf_folder_path, filename)
+        print(f"Convert image {img_folder_link}")
+        save_to_csv(img_folder_link, output_path)
+
 
 
 if __name__ == "__main__":

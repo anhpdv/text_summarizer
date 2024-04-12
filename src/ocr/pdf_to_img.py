@@ -36,9 +36,9 @@ def pdf_to_images(pdf_path, output_folder):
 
         # Get the base name of the PDF file
         pdf_name = os.path.splitext(os.path.basename(pdf_path))[0]
+        print(f"Convert{pdf_name}")
         pdf_to_img_fodler = os.path.join(output_folder, pdf_name)
         os.makedirs(pdf_to_img_fodler, exist_ok=True)
-
         # Convert PDF pages to images
         pages = convert_from_path(pdf_path, poppler_path=config.POPPLER_PATH)
 
@@ -101,10 +101,14 @@ def pdf_to_image_np(pdf_path):
 
 
 def main():
-    # Đường dẫn đến tài liệu PDF chứa bảng
-    pdf_path = "./dataset/data_pdf/journal_9892_1.pdf"
     output_folder = config.IMAGE_DATA_LINK
-    pdf_to_images(pdf_path, output_folder)
+    # Đường dẫn đến tài liệu PDF chứa bảng
+    # pdf_path = "./dataset/data_pdf/journal_9892_1.pdf"
+    # pdf_to_images(pdf_path, output_folder)
+    pdf_folder_path = "./dataset/data_pdf"
+    for filename in os.listdir(pdf_folder_path):
+        pdf_path = os.path.join(pdf_folder_path, filename)
+        pdf_to_images(pdf_path, output_folder)
 
 
 if __name__ == "__main__":
