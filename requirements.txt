@@ -11,3 +11,7 @@ pytesseract
 
 # 
 openpyxl
+
+# text
+underthesea
+pyvi

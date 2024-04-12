@@ -4,6 +4,7 @@ import os
 import requests
 import subprocess
 
+
 def download_file(url, folder, filename):
     """
     Tải một tệp từ URL và lưu vào thư mục đã chỉ định.
@@ -83,13 +84,9 @@ def download_and_extract_zip(url, extract_path="."):
         print(f"An error occurred: {e}")
         return False
 
+
 def main():
     # Sử dụng lệnh pip để cài đặt các gói cần thiết
-    # subprocess.run(
-    #     [
-    #         "pip", "install", "torch", "torchvision", "torchaudio", "--index-url", "https://download.pytorch.org/whl/cu121",
-    #     ]
-    # )
     subprocess.run(["py", "-m", "pip", "install", "-r", "requirements.txt"])
 
     tools_support = "./tools"
@@ -97,6 +94,9 @@ def main():
     print("Dowload poppler.")
     url_poppler = "https://github.com/oschwartz10612/poppler-windows/releases/download/v24.02.0-0/Release-24.02.0-0.zip"
     download_and_extract_zip(url_poppler, tools_support)
+    stopword_link = "https://raw.githubusercontent.com/stopwords/vietnamese-stopwords/master/vietnamese-stopwords.txt"
+    stopwords_folder = "./models/stopwords"
+    download_file(stopword_link, stopwords_folder, "vietnamese.txt")
 
 
 if __name__ == "__main__":

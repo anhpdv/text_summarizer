@@ -9,7 +9,7 @@
    1. [tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html)
    2. [tesseract-MiAI](https://www.miai.vn/2019/08/22/ocr-nhan-dang-van-ban-tieng-viet-voi-tesseract-ocr/)
 7. Stopwords
-   1. [VietNamese Big](https://github.com/stopwords/vietnamese-stopwords)
+   1. [VietNamese stopwords](https://github.com/stopwords/vietnamese-stopwords)
    2. [VietNamese Stopword 1](https://stopwords.github.io/vietnamese-stopwords/)
    3. [VietNamese Stopword 2](https://github.com/stopwords-iso/stopwords-vi/blob/master/stopwords-vi.txt)
    4. [Stopwords iso](https://github.com/stopwords-iso/stopwords-iso)
