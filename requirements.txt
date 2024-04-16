@@ -1,7 +1,6 @@
 # Excel and data manipulation:
 pandas
-nltk
-tensorflow
+# nltk
 
 # Image processing:
 opencv-python
@@ -14,4 +13,5 @@ openpyxl
 
 # text
 underthesea
-pyvi
+# pyvi
+pytorch-nlp
