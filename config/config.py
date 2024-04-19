@@ -10,7 +10,7 @@ POPPLER_PATH = "./tools/poppler-24.02.0/Library/bin"
 SAVE_MODEL_PATH = "./models"
 SAVE_LOG_PATH = "./log"
 TESSERACT_LINK = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-STOPWORDS_LINK = "./models/stopwords/my_stopwords.txt"
+STOPWORDS_LINK = "./models/stopwords/mini_stopwords.txt"
 TEXT_SUMMARY_DATA = "./dataset/data_text_summary.csv"
 
 try:
@@ -21,5 +21,6 @@ except FileNotFoundError:
 except Exception as e:
     print("An error occurred while reading stopwords:", e)
     STOPWORDS_USE = set()  # Set to an empty set if there's any other error
-    
+
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Device:{DEVICE}")
