@@ -1,17 +1,20 @@
 import os
 import pandas as pd
 
+
 try:
     from src.summary_model.preprocess_text import preprocess_text
+    from config.config import TEXT_SUMMARY_DATA
 except ImportError:
     try:
         from summary_model.preprocess_text import preprocess_text
+        from config import TEXT_SUMMARY_DATA
     except ImportError:
         from helpers import add_path_init
 
         add_path_init()
         from summary_model.preprocess_text import preprocess_text
-
+        from config import TEXT_SUMMARY_DATA
 
 
 def load_data(data_link):
@@ -20,7 +23,7 @@ def load_data(data_link):
         print("Exit data preprocess")
     else:
         print("Start data preprocess")
-        data_text_summary = pd.read_csv("./dataset/data_text_summary.csv")
+        data_text_summary = pd.read_csv(TEXT_SUMMARY_DATA)
         data_train_test = pd.DataFrame()
         data_train_test["summary"] = data_text_summary["summary"].apply(
             lambda x: preprocess_text(x)
