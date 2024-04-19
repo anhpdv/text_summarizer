@@ -86,6 +86,12 @@ def download_and_extract_zip(url, extract_path="."):
 
 
 def main():
+        # Sử dụng lệnh pip để cài đặt các gói cần thiết
+    subprocess.run(
+        [
+            "pip", "install", "torch", "torchvision", "torchaudio", "--index-url", "https://download.pytorch.org/whl/cu121",
+        ]
+    )
     # Sử dụng lệnh pip để cài đặt các gói cần thiết
     subprocess.run(["py", "-m", "pip", "install", "-r", "requirements.txt"])
 
