@@ -2,3 +2,6 @@
 !.gitignore
 !stopwords
 !mini_stopwords.txt
+!w2v_model
+!w2v.model
+!w2v.model.vectors.npy
