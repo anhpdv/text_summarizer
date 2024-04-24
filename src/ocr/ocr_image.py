@@ -99,28 +99,38 @@ def detect_line_word(image):
     current_line = []
     for hull in hulls:
         x, y, w, h = cv2.boundingRect(hull)
-        if current_line and y - current_line[-1][1] > h * 1.2:  # Khoảng cách lớn hơn 1.2 lần chiều cao
+        if (
+            current_line and y - current_line[-1][1] > h * 1.2
+        ):  # Khoảng cách lớn hơn 1.2 lần chiều cao
             lines.append(current_line)
             current_line = []
         current_line.append((x, y, x + w, y + h))
     if current_line:
         lines.append(current_line)
-        
+
     # Tính toán khoảng cách trung bình giữa các dòng chữ
     avg_line_spacing = sum(line[0][1] - line[-1][3] for line in lines) / len(lines)
 
     # Tính toán margin
-    margin = int(avg_line_spacing / 2)
-    
+    line_margin = int(avg_line_spacing / 2)
+    # Lấy kích thước ảnh
+    height, width = image.shape[:2]
+
     # Tạo hình chữ nhật lớn nhất chứa các dòng chữ
     lines_rects = []
     for line in lines:
-        x_min = min(rect[0] for rect in line) + margin
-        y_min = min(rect[1] for rect in line) + margin
-        x_max = max(rect[2] for rect in line) - margin
-        y_max = max(rect[3] for rect in line) - margin
+        # Tính toán margin trái phải
+        left_margin = min(rect[0] for rect in line)
+        right_margin = width - max(rect[2] for rect in line)
+        horizontal_margin = int(min(left_margin, right_margin) / 2)
+
+        x_min = min(rect[0] for rect in line) - horizontal_margin
+        y_min = min(rect[1] for rect in line) + line_margin
+        x_max = max(rect[2] for rect in line) + horizontal_margin
+        y_max = max(rect[3] for rect in line) - line_margin
         lines_rects.append((x_min, y_min, x_max, y_max))
     return lines_rects
+
 
 def crop_box(image, box_coordinates):
     """
@@ -135,6 +145,7 @@ def crop_box(image, box_coordinates):
     """
     x_min, y_min, x_max, y_max = box_coordinates
     return image[y_min:y_max, x_min:x_max]
+
 
 def main():
     output_path = config.TEXT_DATA_LINK
@@ -152,6 +163,7 @@ def main():
     # print(ocr_tesseract(img))
     # 11. 1.2. 1.3. 24. 22. 221. 222. 2.23. 224. 225. 2.3. 2.31. 2.32. 4. 4.2 43 54. 52. s43. s4. s5, s6. 57. 524. 522, 5.23. 54. s4. S1. s42, 5.3, 61. 6.2. 6.3. Z1 z2
     # Mục đích và phạm vi áp dụng kiến trúc Chính phủ điện tử TIXVN Giới thiệu chung về Khung kiến trúc Chính phủ điện tử: Sự cần thiết xây dựng Kiến trúc Chính phủ điện tử tại Thông tấn xã Việt Nam:.. Mục đích và phạm vi áp dụng.. Hiện trạng hệ thống Công nghệ thông tin và Chính phủ điện tử tại Thông tấn xã Hiện trạng triển khai ứng dụng CNTT tại Thông tấn xã Việt Nam: Các hệ thống ứng dụng CNTT của TTXVN. Hệ thống tác nghiệp phục vụ sản xuất thông tỉn.. Các ứng dụng của Hệ thống kỹ thuật sản xuất tin truyền hình.. Hệ thống phục vụ quản lý hành chính nhà nước. Trung tâm dữ liệu. Hệ thống đảm bảo an toàn thông tin... Hiện trạng triển khai CPĐT tại TTXVN.. Khung kiến trúc CPĐT Việt Nam... Đánh giá. Định hướng Kiến trúc Chính phủ điện tử Thông tấn xã Chức năng, nhiệm vụ của TTXVN. Cơ cấu tổ chức TTXVN. Tầm nhìn, định hướng phát triển Chính phủ điện tử TTXVN. Các nguyên tắc xây dựng kiến trúc Chính phủ điện tử TTXVN: Kiến trúc Chính phủ điện tử Thông tấn xã Sơ đồ tổng thể Kiến trúc Chính phủ điện tử TTXVN.. lệt Nam... Người sử dụng Kênh truy cập Dịch vụ cổng thông tin điện tử... Dịch vụ công trực tuyến (Dịch vụ thông tin)..... Ứng dụng và cơ sở dữ liệu Các dịch vụ chia sẻ và tích hợp.... Nền tảng tích hợp dịch vụ CPĐT (LGSP)... Nền tảng dịch vụ dùng chung..... Nền tảng tích hợp ứng dụng. Các dịch vụ tích hợp và liên thông dữ liệu... Các nguyên tắc, yêu cầu trong việc triển khai các thành phần trong Kiến trúc CPĐT TTXVN.... Nguyên tắc... Yêu cầu về nghiệp vụ Yêu cầu về kỹ thuật... Lộ trình/kế hoạch/nguồn kinh phí 1ộ trình triển khai kiến trúc Chính phủ Kế hoạch triển khai... Công tác chỉ đạo triển khai kiến trúc CPĐT TTXVN.... Công tác quản lý, giám sát, duy trì Kiến trúc CPĐT TTXVN.... =Ô -10 _ -12 -18 -18 -15 -15 -16 -17 -19 .21 .21 -2 -23 -23 -28 -28 -30 .31 .32 -34 -36 -37 -37 -38 -38 -42 -42 -48 -46 -46 -46 -46
+
 
 if __name__ == "__main__":
     main()
