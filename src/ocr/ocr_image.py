@@ -82,7 +82,7 @@ def detect_line_word(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
         # Nếu ảnh đã là ảnh grayscale, sử dụng ảnh đó trực tiếp
-        gray = image
+        gray = image.copy()
 
     # Sử dụng MSER để phát hiện vùng chữ
     mser = cv2.MSER_create()
@@ -91,37 +91,50 @@ def detect_line_word(image):
     # Lọc các vùng quá nhỏ
     hulls = [cv2.convexHull(p.reshape(-1, 1, 2)) for p in regions]
     hulls = [h for h in hulls if cv2.contourArea(h) > 100]
-
     # Sắp xếp các vùng theo thứ tự từ trên xuống dưới
     hulls.sort(key=lambda x: cv2.boundingRect(x)[1])
+
     # Chia ảnh thành các dòng chữ
     lines = []
-    line = []
+    current_line = []
     for hull in hulls:
         x, y, w, h = cv2.boundingRect(hull)
-        if line and y - line[-1][1] > h * 1.2:  # Nếu khoảng cách lớn hơn 1.2 lần chiều cao
-            lines.append(line)
-            line = []
-        line.append((x, y, x + w, y + h))
-    if line:
-        lines.append(line)
+        if current_line and y - current_line[-1][1] > h * 1.2:  # Khoảng cách lớn hơn 1.2 lần chiều cao
+            lines.append(current_line)
+            current_line = []
+        current_line.append((x, y, x + w, y + h))
+    if current_line:
+        lines.append(current_line)
+        
     # Tính toán khoảng cách trung bình giữa các dòng chữ
     avg_line_spacing = sum(line[0][1] - line[-1][3] for line in lines) / len(lines)
 
-    # Tính toán padding
-    padding = int(avg_line_spacing / 2)
-    lines_text = []
-    line_text = []
+    # Tính toán margin
+    margin = int(avg_line_spacing / 2)
+    
+    # Tạo hình chữ nhật lớn nhất chứa các dòng chữ
+    lines_rects = []
     for line in lines:
-        # Tính toán tọa độ của hình chữ nhật lớn nhất chứa tất cả các hình chữ nhật con của các dòng chữ
-        x_min = min(rect[0] for rect in line) + padding
-        y_min = min(rect[1] for rect in line) + padding
-        x_max = max(rect[2] for rect in line) - padding
-        y_max = max(rect[3] for rect in line) - padding
-        line_text.append((x_min, y_min, x_max, y_max))
-    if line_text:
-        lines_text.append(line_text)
-    return lines_text
+        x_min = min(rect[0] for rect in line) + margin
+        y_min = min(rect[1] for rect in line) + margin
+        x_max = max(rect[2] for rect in line) - margin
+        y_max = max(rect[3] for rect in line) - margin
+        lines_rects.append((x_min, y_min, x_max, y_max))
+    return lines_rects
+
+def crop_box(image, box_coordinates):
+    """
+    Cắt ảnh theo tọa độ hình chữ nhật đã cho.
+
+    Args:
+        image (numpy.ndarray): Ảnh nguồn.
+        box_coordinates (tuple): Tọa độ hình chữ nhật (x_min, y_min, x_max, y_max).
+
+    Returns:
+        numpy.ndarray: Ảnh đã được cắt theo tọa độ hình chữ nhật.
+    """
+    x_min, y_min, x_max, y_max = box_coordinates
+    return image[y_min:y_max, x_min:x_max]
 
 def main():
     output_path = config.TEXT_DATA_LINK
