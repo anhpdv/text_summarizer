@@ -40,7 +40,7 @@ def load_data(data_link):
 
 
 def main():
-    data_link = "./dataset/data_train_test.csv"
+    data_link = "./datasets/data_train_test.csv"
     load_data(data_link)
 
 

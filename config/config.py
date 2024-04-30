@@ -2,16 +2,18 @@
 import torch
 
 
-PRIMARY_DATA_LINK = "./dataset/data_pdf"
-PDF_DATA_LINK = "./dataset/data"
-IMAGE_DATA_LINK = "./dataset/data_image"
-TEXT_DATA_LINK = "./dataset/data_text/"
+PRIMARY_DATA_LINK = "./datasets/data_pdf"
+PDF_DATA_LINK = "./datasets/data"
+IMAGE_DATA_LINK = "./datasets/data_image"
+TEXT_DATA_LINK = "./datasets/data_text/"
 POPPLER_PATH = "./tools/poppler-24.02.0/Library/bin"
 SAVE_MODEL_PATH = "./models"
 SAVE_LOG_PATH = "./log"
 TESSERACT_LINK = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 STOPWORDS_LINK = "./models/stopwords/mini_stopwords.txt"
-TEXT_SUMMARY_DATA = "./dataset/data_text_summary.csv"
+TEXT_SUMMARY_DATA = "./datasets/data_text_summary.csv"
+
+model_menu = ""
 
 try:
     with open(STOPWORDS_LINK, "r", encoding="utf-8") as file:

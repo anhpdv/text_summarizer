@@ -12,6 +12,10 @@ pytesseract
 openpyxl
 
 # text
+Unidecode
 underthesea
+
 # pyvi
 pytorch-nlp
+
+scikit-learn

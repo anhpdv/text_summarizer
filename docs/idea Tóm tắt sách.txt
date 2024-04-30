@@ -1,0 +1,101 @@
+ Tóm tắt nội dung sách theo kích thước đẩu ra mong muốn.
+    Input:
+        - book: Định dạng của sách (PDF, ePub).
+        - size_sumary: Kích thước tóm tắt đầu ra. Có thể là số trang (5, 10, 15, 20, 50) hoặc tỉ lệ phần trăm (5%, 10%, 20%, 30%).
+    Output:
+        - text_sumary: Đoạn văn tóm tắt tương ứng với kích thước yêu cầu, được trả về dưới dạng một cấu trúc dữ liệu.
+    ---
+    Luồng chức năng:
+    - Bước 1: Xác định kích thước tóm tắt và tính toán số từ cần tóm tắt(Coi 1 trang = 400 chữ)
+        + Đầu vào:
+            > `book`: Định dạng của sách (PDF, ePub).
+            > `size_sumary`: Kích thước tóm tắt đầu ra. Có thể là số trang hoặc tỉ lệ phần trăm.
+        + Đầu ra:
+            > `Số từ cần tóm tắt`: Số từ cần tóm tắt được tính toán dựa trên kích thước yêu cầu.
+        + Thực hiện:
+            > Phân tích định dạng sách để xác định số trang hoặc tỉ lệ phần trăm.
+                ->Nếu size_sumary được chỉ định dưới dạng số trang => Số trang tóm tắt = size_sumary
+                ->Nếu size_sumary được chỉ định dưới dạng tỉ lệ phần trăm => Số trang tóm tắt = Tổng số trang sách * size_sumary
+            > Tính toán số từ cần tóm tắt dựa trên kích thước yêu cầu và giả định mỗi trang có khoảng 400 từ.
+            => Số từ tóm tắt = Số trang tóm tắt * 400
+        + Công nghệ:
+            > Xử lý tệp PDF hoặc ePub: PyPDF2, pdfplumber (PDF), EbookLib (ePub).
+            > Tính toán và xử lý dữ liệu: Python (ví dụ: tính toán số trang, xử lý số liệu).
+
+    - Bước 2: Tìm kiếm mục lục sách và thực hiện OCR
+        + Đầu vào:
+            > `book`: Định dạng của sách (PDF, ePub).
+        + Đầu ra:
+            > mục lục sách: Thông tin về mục lục của sách, bao gồm tên chương, trang bắt đầu và trang kết thúc.
+        + Thực hiện:
+            > Sử dụng mô hình học máy để xác định vị trí của mục lục trên 20% trang đầu tiên của sách.
+            > Sử dụng OCR để trích xuất văn bản từ mục lục.
+            > Lưu thông tin về mục lục vào một cấu trúc dữ liệu như JSON.
+            {
+                {
+                    chapter_name: Tên chương
+                    start_page: Trang bắt đầu
+                    end_page: trang kết thúc
+                }
+            }
+        > Công nghệ:
+            > Mô hình học máy: TensorFlow, PyTorch.
+            > OCR: Tesseract, pytesseract.
+            > Xử lý dữ liệu JSON: Python.
+
+    - Bước 3: Chia trang sách thành các chương:
+        + Đầu vào:
+            > mục lục sách: Thông tin về mục lục của sách.
+        + Đầu ra:
+            `Mảng các chương sách`: Trang bắt đầu đến kết thúc của mỗi chương (image numpy).
+        + Thực hiện:
+            > Dựa vào thông tin từ mục lục, chia trang sách thành các chương tương ứng.
+        + Công nghệ:
+            > `Xử lý dữ liệu và chuỗi`: Python.
+            > Có thể sử dụng kỹ thuật phân đoạn văn bản để tách các chương.
+
+    - Bước 4: OCR nội dung từng chương và sửa lỗi text:
+        + Đầu vào:
+            > `các chương sách`: Trang bắt đầu và kết thúc của mỗi chương.
+        + Đầu ra:
+            > `Nội dung đã OCR và được sửa lỗi`: Văn bản được trích xuất từ từng chương và đã được sửa lỗi.
+        + Thực hiện:
+            > Sử dụng OCR để trích xuất văn bản từng chương.
+            > Sử dụng các kỹ thuật xử lý ngôn ngữ tự nhiên (NLP) để sửa lỗi văn bản như chính tả, ngữ pháp.
+        + Công nghệ:
+            >`OCR`: Tesseract, pytesseract.
+            > `Xử lý ngôn ngữ tự nhiên`: NLTK, SpaCy.
+
+    - Bước 5: Tóm tắt từng chương:
+        + Đầu vào:
+            > `Nội dung đã OCR và được sửa lỗi`: Văn bản từng chương.
+        + Đầu ra:
+            > `Tóm tắt của từng chương`: Tóm tắt nội dung của từng chương.
+        + Thực hiện:
+            > Sử dụng phương pháp rút trích hoặc tạo mô hình tóm tắt để tạo ra tóm tắt cho mỗi chương.
+        + Công nghệ:
+            > Rút trích: TF-IDF, TextRank.
+            > Mô hình học máy: Mô hình NLP như Transformer-based models (BERT, GPT) hoặc mô hình seq2seq.
+
+    - Bước 6: Gộp và điều chỉnh tóm tắt:
+        + Đầu vào:
+            > `Tóm tắt của từng chương`: Tóm tắt của từng chương.
+            > `Số từ cần tóm tắt`: Số từ cần tóm tắt dựa trên kích thước yêu cầu.
+        + Đầu ra:
+            > `Tóm tắt cuối cùng`: Tóm tắt được điều chỉnh sao cho số từ gần nhất với yêu cầu.
+        + Thực hiện:
+            > Gộp các tóm tắt từng chương lại với nhau.
+            > So sánh kích thước tóm tắt gộp (đơn vị từ) với kích thước yêu cầu và điều chỉnh nếu cần thiết.
+            > Ngắn hoặc dài hơn 50% so với kích thước tóm tắt mong muốn. Thực hiện tóm tắt nội dung gộp được.
+        Công nghệ:
+            > Xử lý dữ liệu và chuỗi: Python.
+    - Bước 7: Tối ưu hóa nội dung tóm tắt:
+        + Đầu vào:
+            > `tóm tắt cuối cùng`: Tóm tắt đã điều chỉnh.
+        + Đầu ra:
+            > tóm tắt cuối cùng được tối ưu hóa: Tóm tắt được cải thiện chất lượng bằng mô hình học máy hoặc học sâu.
+        + Thực hiện:
+            > Sử dụng mô hình học máy hoặc học sâu để tối ưu hóa nội dung của tóm tắt.
+        + Công nghệ:
+            > Mô hình học máy: TensorFlow, PyTorch.
+            > Mô hình học sâu: GANs, Reinforcement Learning.

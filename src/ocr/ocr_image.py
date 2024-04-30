@@ -22,7 +22,8 @@ def ocr_tesseract(img):
     pytesseract.pytesseract.tesseract_cmd = config.TESSERACT_LINK
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     text = pytesseract.image_to_string(gray, lang="vie")
-    cleaned_text = re.sub(r"[^\w\s]", "", text)
+    # cleaned_text = re.sub(r"[^\w\s]", "", text)
+    cleaned_text = re.sub(r"[\n]", " ", text)
     cleaned_text = " ".join(text.split()).strip()
     return cleaned_text
 
@@ -76,57 +77,88 @@ def save_to_xlsx(img_folder_link, output_path):
     wb.save(os.path.join(output_path, "journal_text.xlsx"))
 
 
-def detect_line_word(image):
+def detect_text_area(image):
+    """
+    Detects text areas in the given image using MSER algorithm.
+
+    Parameters:
+        image (numpy.ndarray): The input image.
+
+    Returns:
+        list: A list of contours representing text areas.
+    """
+
+    # Convert the image to grayscale if it is not grayscale
     if len(image.shape) == 3:
-        # Nếu ảnh không phải là ảnh grayscale, chuyển đổi sang ảnh grayscale
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
-        # Nếu ảnh đã là ảnh grayscale, sử dụng ảnh đó trực tiếp
         gray = image.copy()
 
-    # Sử dụng MSER để phát hiện vùng chữ
+    # Use MSER to detect regions containing text
     mser = cv2.MSER_create()
     regions, _ = mser.detectRegions(gray)
 
-    # Lọc các vùng quá nhỏ
-    hulls = [cv2.convexHull(p.reshape(-1, 1, 2)) for p in regions]
-    hulls = [h for h in hulls if cv2.contourArea(h) > 100]
-    # Sắp xếp các vùng theo thứ tự từ trên xuống dưới
-    hulls.sort(key=lambda x: cv2.boundingRect(x)[1])
+    # Filter out small regions
+    regions = [cv2.convexHull(p.reshape(-1, 1, 2)) for p in regions]
+    regions = [h for h in regions if cv2.contourArea(h) > 100]
 
-    # Chia ảnh thành các dòng chữ
+    # Sort regions from top to bottom
+    regions.sort(key=lambda x: cv2.boundingRect(x)[1])
+
+    return regions
+
+
+def detect_line_word(image):
+    """
+    Detects lines of text in the given image and groups them into lines.
+
+    Parameters:
+        image (numpy.ndarray): The input image containing text.
+
+    Returns:
+        list: A list of bounding rectangles representing lines of text.
+    """
+
+    # Detect text areas
+    hulls = detect_text_area(image)
+
+    # Group text areas into lines
     lines = []
     current_line = []
     for hull in hulls:
         x, y, w, h = cv2.boundingRect(hull)
+        # Check if there is a large enough gap to start a new line
         if (
             current_line and y - current_line[-1][1] > h * 1.2
-        ):  # Khoảng cách lớn hơn 1.2 lần chiều cao
+        ):
             lines.append(current_line)
             current_line = []
         current_line.append((x, y, x + w, y + h))
     if current_line:
         lines.append(current_line)
 
-    # Tính toán khoảng cách trung bình giữa các dòng chữ
+    # Calculate average line spacing
     avg_line_spacing = sum(line[0][1] - line[-1][3] for line in lines) / len(lines)
 
-    # Tính toán margin
-    line_margin = int(avg_line_spacing / 2)
+    # Calculate margin based on average line spacing
+    ratio = 3 #8
+    line_margin = int((avg_line_spacing / ratio))
     # Lấy kích thước ảnh
-    height, width = image.shape[:2]
+    # height, width = image.shape[:2]
 
-    # Tạo hình chữ nhật lớn nhất chứa các dòng chữ
+    # Create bounding rectangles for each line of text
     lines_rects = []
     for line in lines:
         # Tính toán margin trái phải
-        left_margin = min(rect[0] for rect in line)
-        right_margin = width - max(rect[2] for rect in line)
-        horizontal_margin = int(min(left_margin, right_margin) / 2)
+        # left_margin = min(rect[0] for rect in line)
+        # right_margin = width - max(rect[2] for rect in line)
+        # horizontal_margin = int(min(left_margin, right_margin) / 2)
 
-        x_min = min(rect[0] for rect in line) - horizontal_margin
+        # x_min = min(rect[0] for rect in line) - horizontal_margin
+        x_min = min(rect[0] for rect in line) + line_margin
         y_min = min(rect[1] for rect in line) + line_margin
-        x_max = max(rect[2] for rect in line) + horizontal_margin
+        # x_max = max(rect[2] for rect in line) + horizontal_margin
+        x_max = max(rect[2] for rect in line) - line_margin
         y_max = max(rect[3] for rect in line) - line_margin
         lines_rects.append((x_min, y_min, x_max, y_max))
     return lines_rects

@@ -11,15 +11,15 @@ def main(stop_words_vietnamese):
     """
     # Apply preprocessing to the 'text' column
     # Data OCR còn lỗi chính tả - Có thể dung mô hình xử lý lỗi chính tả trước
-    data_text = pd.read_csv("./dataset/data_full.csv")
+    data_text = pd.read_csv("./datasets/data_full.csv")
     data_text.drop_duplicates(subset=["Journal_ID"], inplace=True)
     data_text.dropna(axis=0, inplace=True)
     
     data_preprocess = pd.DataFrame()
     data_preprocess["summary"] = data_text["Summary"]
     data_preprocess["text"] = data_text["full_text"]
-    data_preprocess.to_csv("./dataset/data_preprocess.csv")
-    # data_preprocess.to_excel("./dataset/data_preprocess.xlsx")
+    data_preprocess.to_csv("./datasets/data_preprocess.csv")
+    # data_preprocess.to_excel("./datasets/data_preprocess.xlsx")
     # Print information about the preprocessed data
     # print(data_preprocess.info())
     # print(data_preprocess.head())

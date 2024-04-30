@@ -93,7 +93,7 @@ def main():
         ]
     )
     # Sử dụng lệnh pip để cài đặt các gói cần thiết
-    subprocess.run(["py", "-m", "pip", "install", "-r", "requirements.txt"])
+    subprocess.run(["python", "-m", "pip", "install", "-r", "requirements.txt"])
 
     tools_support = "./tools"
     # Example usage:

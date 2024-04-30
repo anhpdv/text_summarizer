@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import os
 import cv2
 import numpy as np
@@ -5,11 +6,14 @@ from pdf2image import convert_from_path
 
 try:
     from config import config
-except:
-    from helpers import add_path_init
+except ImportError:
+    try:
+        import config
+    except:
+        from helpers import add_path_init
 
-    add_path_init()
-    import config
+        add_path_init()
+        import config
 
 
 def pdf_to_images(pdf_path, output_folder):
@@ -80,6 +84,7 @@ def pdf_to_image_np(pdf_path):
         - The function assumes that the poppler library path is specified in the config module.
     """
     try:
+        print(f"Start Convert")
         # Convert PDF pages to images
         pages = convert_from_path(pdf_path, poppler_path=config.POPPLER_PATH)
 
@@ -103,12 +108,12 @@ def pdf_to_image_np(pdf_path):
 def main():
     output_folder = config.IMAGE_DATA_LINK
     # Đường dẫn đến tài liệu PDF chứa bảng
-    # pdf_path = "./dataset/data_pdf/journal_9892_1.pdf"
+    # pdf_path = "./datasets/data_pdf/journal_9892_1.pdf"
     # pdf_to_images(pdf_path, output_folder)
-    pdf_folder_path = "./dataset/data_pdf"
+    pdf_folder_path = "./datasets/data_pdf"
     for filename in os.listdir(pdf_folder_path):
         pdf_path = os.path.join(pdf_folder_path, filename)
-        pdf_to_images(pdf_path, output_folder)
+        # pdf_to_images(pdf_path, output_folder)
 
 
 if __name__ == "__main__":
